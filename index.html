@@ -1,12 +1,47 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Draw Rectangles</title>
-</head>
-<body>
-    <canvas id="myCanvas" width="400" height="200" style="border:1px solid #000;">
-        Your browser does not support the canvas element.
-    </canvas>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas with Stats Grid</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #grid-container {
+        display: grid;
+        grid-template-columns: 75% 25%;
+        height: 100%;
+      }
+      canvas {
+        display: block; /* Prevent scrollbar */
+        border: 2px solid #ccc; /* Add a border around the canvas */
+        box-sizing: border-box; /* Include border in the element's total width and height */
+        width: 100%; /* Make canvas fill its container */
+        /* height: 100%; */
+      }
+      #stats {
+        padding: 20px;
+        border: 2px solid #ccc; /* Add a border for visual separation */
+        box-sizing: border-box;
+        overflow-y: auto; /* Enable scrolling if content overflows */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="grid-container">
+      <canvas id="myCanvas"></canvas>
+      <div id="stats">
+        <h2>Stats</h2>
+        <p>Here you can display various statistics.</p>
+        <!-- More stats content goes here -->
+      </div>
+    </div>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
