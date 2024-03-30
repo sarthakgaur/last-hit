@@ -10,31 +10,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
   let initialDamage = 10;
 
   let rectangles = [
-    {
-      x: 10,
-      y: 10,
-      width: 50,
-      height: 50,
-      health: 100,
-      color: "rgb(200, 0, 0)",
-    },
-    {
-      x: 70,
-      y: 10,
-      width: 50,
-      height: 50,
-      health: 100,
-      color: "rgb(0, 200, 0)",
-    },
-    {
-      x: 130,
-      y: 10,
-      width: 50,
-      height: 50,
-      health: 100,
-      color: "rgb(0, 0, 200)",
-    },
+    getInitialRectangle(10, 10, "rgb(200, 0, 0)"),
+    getInitialRectangle(70, 10, "rgb(0, 200, 0)"),
+    getInitialRectangle(130, 10, "rgb(0, 0, 200)")
   ];
+
+  function getInitialRectangle(x, y, color) {
+    return {
+      x: x,
+      y: y,
+      width: 50,
+      height: 50,
+      health: 100,
+      color: color,
+    }
+  }
 
   let lastHitCounter = 0;
   let missedCounter = 0;
@@ -85,6 +75,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
           rectangles = rectangles.filter((r) => r.health > 0);
           lastHitCounter++; // Increment the counter
           lastHitCounterElement.textContent = lastHitCounter; // Update the counter display
+
+          fadeInNewRectangle(getInitialRectangle(rectangle.x, rectangle.y, rectangle.color));
         }
         drawAllRectangles();
       }
@@ -117,6 +109,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
       if (rectangle.health <= 0) {
         missedCounter++; // Increment the counter
         missedCounterElement.textContent = missedCounter; // Update the counter display
+
+        fadeInNewRectangle(getInitialRectangle(rectangle.x, rectangle.y, rectangle.color));
       }
     });
     // Filter out rectangles with zero health
@@ -132,4 +126,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas(); // Initial resize
+
+  function fadeInNewRectangle(rectangle) {
+    const fadeInInterval = setInterval(function () {  
+      drawRectWithHealthBar(rectangle);
+
+      rectangles.push(rectangle);
+      
+      clearInterval(fadeInInterval);
+    }, 500);
+  }
 });
