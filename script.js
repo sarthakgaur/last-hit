@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", (event) => {
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
+  const lastHitCounterElement = document.getElementById("last-hit-counter");
+  const missedCounterElement = document.getElementById("missed-counter");
+  const minionHealthInput = document.getElementById("minion-health");
+  const damageInput = document.getElementById("damage");
+  const applyConfigurationBtn = document.getElementById("apply-configuration");
+  let initialHealth = 100;
+  let initialDamage = 10;
 
   let rectangles = [
     {
@@ -29,6 +36,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     },
   ];
 
+  let lastHitCounter = 0;
+  let missedCounter = 0;
+
   function resizeCanvas() {
     canvas.height = canvas.parentElement.clientHeight; // Set to the height of the parent container
     canvas.width = canvas.parentElement.clientWidth * 0.75; // Set to 75% of the width of the parent container
@@ -39,7 +49,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     ctx.fillStyle = rect.color;
     ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-    const healthBarWidth = (rect.width * rect.health) / 100;
+    const healthBarWidth = (rect.width * rect.health) / initialHealth;
     const healthBarHeight = 5;
     const healthBarY = rect.y - 10;
 
@@ -68,22 +78,46 @@ document.addEventListener("DOMContentLoaded", (event) => {
         y > rectangle.y &&
         y < rectangle.y + rectangle.height
       ) {
-        rectangle.health -= 10;
+        rectangle.health -= initialDamage;
         if (rectangle.health <= 0) {
           rectangle.health = 0;
           // Remove rectangle if health is zero
           rectangles = rectangles.filter((r) => r.health > 0);
+          lastHitCounter++; // Increment the counter
+          lastHitCounterElement.textContent = lastHitCounter; // Update the counter display
         }
         drawAllRectangles();
       }
     });
   });
 
+  function getConfigInput(inputValue, defaultValue) {
+    const input = parseInt(inputValue);
+
+    return isNaN(input) ? defaultValue : input
+  }
+
+  applyConfigurationBtn.addEventListener("click", function () {
+    const newMinionHealth = getConfigInput(minionHealthInput.value);
+    const newDamage = getConfigInput(damageInput.value);
+
+    rectangles.forEach((rectangle) => {
+      rectangle.health = newMinionHealth;
+      initialHealth = newMinionHealth;
+      initialDamage = newDamage;
+    });
+  });
+
   function reduceHealthRandomly() {
     rectangles.forEach(function (rectangle) {
-      // Reduce the health by a random amount between 1 and 10
-      const randomReduction = Math.floor(Math.random() * 10) + 1;
+      // Reduce the health by a random amount between 1 and 1/10th of initialHealth
+      const randomReduction = Math.floor(Math.random() * (initialHealth/10)) + 1;
       rectangle.health -= randomReduction;
+
+      if (rectangle.health <= 0) {
+        missedCounter++; // Increment the counter
+        missedCounterElement.textContent = missedCounter; // Update the counter display
+      }
     });
     // Filter out rectangles with zero health
     rectangles = rectangles.filter((rectangle) => rectangle.health > 0);
